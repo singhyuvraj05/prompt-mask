@@ -1,68 +1,133 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import PolicyBar from '@/components/PolicyBar';
+import RiskGauge from '@/components/RiskGauge';
+import Playground from '@/components/Playground';
+import AuditTable from '@/components/AuditTable';
+import { inspectAndMask } from '@/lib/maskEngine';
+import presetsData from '@/data/presets.json';
+import initialLogs from '@/data/auditLogs.json';
 
 export default function Home() {
+  const [policies, setPolicies] = useState({
+    pii: true,
+    secrets: true,
+    financial: true,
+    health: true,
+  });
+
+  const [selectedPresetId, setSelectedPresetId] = useState(
+    presetsData[0]?.id || 'devops-leak'
+  );
+  const [promptText, setPromptText] = useState(
+    presetsData[0]?.prompt || ''
+  );
+
+  const [maskResult, setMaskResult] = useState(() =>
+    inspectAndMask(presetsData[0]?.prompt || '', {
+      pii: true,
+      secrets: true,
+      financial: true,
+      health: true,
+    })
+  );
+
+  const [auditLogs, setAuditLogs] = useState(initialLogs);
+  const [latency, setLatency] = useState(1.2);
+
+  const runFirewall = (text = promptText, currentPolicies = policies) => {
+    const start = performance.now();
+    const result = inspectAndMask(text, currentPolicies);
+    const duration = Math.max(0.4, Number((performance.now() - start).toFixed(2)));
+    setLatency(duration);
+    setMaskResult(result);
+    return { result, duration };
+  };
+
+  useEffect(() => {
+    runFirewall(promptText, policies);
+  }, [policies]);
+
+  const handleSelectPreset = (preset) => {
+    setSelectedPresetId(preset.id);
+    setPromptText(preset.prompt);
+    runFirewall(preset.prompt, policies);
+  };
+
+  const handleRunFirewallAndLog = () => {
+    const { result, duration } = runFirewall(promptText, policies);
+    const score = result?.riskScore ?? 0;
+    const newLog = {
+      id: `LOG-${Date.now().toString(36).toUpperCase()}`,
+      timestamp: new Date().toISOString(),
+      promptPreview: promptText.slice(0, 65) + (promptText.length > 65 ? '...' : ''),
+      score,
+      status: score > 70 ? 'Blocked' : score > 0 ? 'Sanitized' : 'Safe',
+      threats: result?.flaggedEntities?.length ?? 0,
+      latency: `${duration}ms`,
+    };
+    setAuditLogs((prev) => [newLog, ...prev]);
+  };
+
+  const togglePolicy = (key) => {
+    setPolicies((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  const toggleAllPolicies = (val) => {
+    setPolicies({
+      pii: val,
+      secrets: val,
+      financial: val,
+      health: val,
+    });
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/30 selection:text-cyan-200">
+      <Header latency={latency} />
+
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        <PolicyBar
+          policies={policies}
+          activePolicies={policies}
+          onTogglePolicy={togglePolicy}
+          onToggleAll={toggleAllPolicies}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+        <RiskGauge
+          riskScore={maskResult?.riskScore ?? 0}
+          score={maskResult?.riskScore ?? 0}
+          threatLevel={maskResult?.threatLevel}
+          breakdown={maskResult?.breakdown}
+          flaggedCount={maskResult?.flaggedEntities?.length ?? 0}
+        />
+
+        <Playground
+          presets={presetsData}
+          selectedPresetId={selectedPresetId}
+          onSelectPreset={handleSelectPreset}
+          promptText={promptText}
+          prompt={promptText}
+          setPromptText={setPromptText}
+          onChangePrompt={(val) => {
+            setPromptText(val);
+            runFirewall(val, policies);
+          }}
+          maskResult={maskResult}
+          onRunFirewall={handleRunFirewallAndLog}
+        />
+
+        <AuditTable
+          logs={auditLogs}
+          onLoadPreset={(logPrompt) => {
+            if (logPrompt) {
+              setPromptText(logPrompt);
+              runFirewall(logPrompt, policies);
+            }
+          }}
+        />
       </main>
     </div>
   );
