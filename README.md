@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# PromptMask 🛡️
+> **Client-Side Pre-LLM Privacy Firewall & Surrogate Tokenizer**  
+> Intercept enterprise credentials, infrastructure secrets, PCI-DSS card data, and PII in `<1ms` before prompts leave the client device.
 
-## Getting Started
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.3.8-black?logo=next.js)](https://nextjs.org/)
+[![Turbopack](https://img.shields.io/badge/Bundler-Turbopack-blueviolet)](https://turbo.build/)
+[![Execution](https://img.shields.io/badge/Latency-%3C1ms-success)](#performance)
+[![Privacy](https://img.shields.io/badge/Privacy-Zero--Knowledge-brightgreen)](#architecture)
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](#)
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚨 The Problem
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Enterprise developers paste production connection strings, cloud keys, customer records, and internal code snippets into ChatGPT, Claude, and cloud LLMs every day:
+1. **Third-Party Data Ingestion:** Plaintext secrets enter public LLM training corpora, inference logs, and cache layers.
+2. **Centralized Proxy Pitfalls:** Traditional DLP firewalls route prompts through an intermediary inspection server, creating an external honeypot and adding 150–400ms latency.
+3. **Redaction Destroys Context:** Replacing secrets with `[REDACTED]` destroys code syntax, variable dependencies, and LLM reasoning accuracy.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ⚡ The Solution: Zero-Knowledge Surrogate Tokenization
 
-## Learn More
+**PromptMask** acts as an in-browser pre-flight security layer. It scans prompts locally across multi-vector threat policies, replaces sensitive entities with context-aware surrogate tokens, and maintains an ephemeral client-side token lookup table.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+[ Developer Prompt ] 
+        │
+        ▼
+[ PromptMask Client Engine (<1ms) ] ──▶ [ Ephemeral In-Memory Token Matrix ]
+        │                                             ▲
+        ▼ (Sanitized Payload)                         │ (Local Rehydration)
+[ External LLM Provider (ChatGPT/Claude) ]            │
+        │                                             │
+        ▼ (LLM Response referencing <TOKEN_n>)        │
+[ Client Unmasking Layer ] ───────────────────────────┘
+        │
+        ▼
+[ Restored Developer Output ]
