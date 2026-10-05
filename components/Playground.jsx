@@ -16,7 +16,9 @@ import {
   Layers,
   ChevronDown,
   ChevronUp,
+  AlertCircle,
 } from 'lucide-react';
+import RehydrationModal from '@/components/RehydrationModal';
 
 export default function Playground({
   presets = [],
@@ -29,7 +31,8 @@ export default function Playground({
 }) {
   const [copied, setCopied] = useState(false);
   const [showTokenMap, setShowTokenMap] = useState(false);
-  const [simulatedSuccess, setSimulatedSuccess] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [noTokensToast, setNoTokensToast] = useState(false);
 
   const entities = maskResult?.entities || [];
   const maskedText = maskResult?.maskedText || '';
@@ -46,8 +49,12 @@ export default function Playground({
   };
 
   const handleSimulateCall = () => {
-    setSimulatedSuccess(true);
-    setTimeout(() => setSimulatedSuccess(false), 3500);
+    if (!entities || entities.length === 0) {
+      setNoTokensToast(true);
+      setTimeout(() => setNoTokensToast(false), 3000);
+      return;
+    }
+    setModalOpen(true);
   };
 
   // Helper to render masked text with glowing token chips
@@ -253,14 +260,19 @@ export default function Playground({
             </div>
 
             {/* Simulation feedback toast */}
-            {simulatedSuccess && (
-              <div className="mt-3 p-2.5 rounded-xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-300 text-xs font-mono flex items-center gap-2 animate-in fade-in duration-200">
-                <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>
-                  Payload transmitted safely to mock OpenAI API. Zero plaintext secrets or PII leaked outside the client!
-                </span>
-              </div>
-            )}
+            {noTokensToast && (
+        <div className="mt-3 p-2.5 rounded-xl bg-amber-950/70 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+          <span>No sensitive tokens detected to simulate.</span>
+        </div>
+      )}
+
+      <RehydrationModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        maskedText={maskedText}
+        tokenMap={tokenMap}
+      />
           </div>
 
           {/* Reversible Token Matrix Drawer */}
