@@ -1,0 +1,83 @@
+[
+  {
+    "id": "AUD-9401",
+    "timestamp": "2026-10-05T13:18:10Z",
+    "riskScore": 95,
+    "riskLevel": "Critical",
+    "status": "Blocked",
+    "maskedCount": 4,
+    "snippet": "export AWS_ACCESS_KEY_ID=\"AKIAIOS...\" and DB_PASSWORD=\"postgres_prod_secret...\"",
+    "categories": ["SECRET"]
+  },
+  {
+    "id": "AUD-9402",
+    "timestamp": "2026-10-05T12:54:32Z",
+    "riskScore": 82,
+    "riskLevel": "Critical",
+    "status": "Blocked",
+    "maskedCount": 6,
+    "snippet": "Customer PAN ABCDE1234F, card 4532 8901 2345 6789, debit of ₹3,48,500...",
+    "categories": ["FINANCIAL", "PII"]
+  },
+  {
+    "id": "AUD-9403",
+    "timestamp": "2026-10-05T12:31:05Z",
+    "riskScore": 65,
+    "riskLevel": "Warning",
+    "status": "Sanitized",
+    "maskedCount": 5,
+    "snippet": "Patient Rajesh Kumar, Aadhaar 4589 1204 8832, diagnosed with Type 2 Diabetes Mellitus...",
+    "categories": ["HEALTH", "PII"]
+  },
+  {
+    "id": "AUD-9404",
+    "timestamp": "2026-10-05T11:45:20Z",
+    "riskScore": 0,
+    "riskLevel": "Safe",
+    "status": "Safe",
+    "maskedCount": 0,
+    "snippet": "Write a production-ready React custom hook in TypeScript named `useDebounce`...",
+    "categories": []
+  },
+  {
+    "id": "AUD-9405",
+    "timestamp": "2026-10-05T10:12:44Z",
+    "riskScore": 88,
+    "riskLevel": "Critical",
+    "status": "Blocked",
+    "maskedCount": 3,
+    "snippet": "Connecting to replica node at 10.240.0.45 with Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+    "categories": ["SECRET"]
+  },
+  {
+    "id": "AUD-9406",
+    "timestamp": "2026-10-05T09:30:18Z",
+    "riskScore": 45,
+    "riskLevel": "Warning",
+    "status": "Sanitized",
+    "maskedCount": 3,
+    "snippet": "KYC verification for Aadhaar 8491 3029 4810 and user email support-escalation@pay...",
+    "categories": ["PII"]
+  },
+  {
+    "id": "AUD-9407",
+    "timestamp": "2026-10-05T08:15:02Z",
+    "riskScore": 25,
+    "riskLevel": "Warning",
+    "status": "Sanitized",
+    "maskedCount": 1,
+    "snippet": "Customer dispute over ledger fee balance of $4,250.00 for order settlement...",
+    "categories": ["FINANCIAL"]
+  },
+  {
+    "id": "AUD-9408",
+    "timestamp": "2026-10-05T07:05:40Z",
+    "riskScore": 55,
+    "riskLevel": "Warning",
+    "status": "Sanitized",
+    "maskedCount": 4,
+    "snippet": "Clinical review: prescribed Metformin 850mg bid, Lisinopril 10mg daily with cardiac biopsy...",
+    "categories": ["HEALTH"]
+  }
+]
+

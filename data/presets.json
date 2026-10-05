@@ -1,0 +1,31 @@
+[
+  {
+    "id": "devops-leak",
+    "name": "DevOps Cloud & Credential Leak",
+    "category": "DevOps",
+    "description": "Simulates a developer pasting deployment configs containing AWS Access Keys, Bearer JWTs, private database passwords, and internal RFC1918 IP addresses.",
+    "prompt": "Hey Claude, help me debug this Kubernetes deployment script for our internal cluster. We are getting a connection timeout when connecting to postgres at 10.240.0.45:5432 with user 'admin_root' and DB_PASSWORD=\"postgres_prod_secret_9981!#\".\n\nAlso, verify if my AWS S3 upload script is configured properly:\nexport AWS_ACCESS_KEY_ID=\"AKIAIOSFODNN7EXAMPLE\"\nexport AWS_SECRET_ACCESS_KEY=\"wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY\"\nexport AUTH_BEARER=\"Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkFkbWluIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\"\n\nWhy is the service failing to connect to the replica node?"
+  },
+  {
+    "id": "healthcare-ehr",
+    "name": "Healthcare EHR Patient Note",
+    "category": "Healthcare",
+    "description": "Simulates a clinical handover document containing patient contact info, Indian Aadhaar ID, chronic diagnoses, biopsy orders, and pharmaceutical prescriptions.",
+    "prompt": "Please summarize this clinical handover note for Dr. Sharma:\nPatient: Rajesh Kumar, age 54. Primary Contact: +91 98201 54321, rajesh.kumar99@healthportal.in.\nAadhaar ID: 4589 1204 8832.\n\nClinical Summary: Patient presented with chronic hypertension and complaints of acute chest tightness. Diagnosed with Stage II Type 2 Diabetes Mellitus and suspected Coronary Artery Disease. Currently prescribed Metformin 850mg bid, Lisinopril 10mg daily, and scheduled for a cardiac biopsy next Tuesday. Lab tests also note elevated creatinine and mild depressive disorder. Recommend follow-up in 14 days."
+  },
+  {
+    "id": "fintech-pii",
+    "name": "FinTech Customer PII & Cards",
+    "category": "FinTech",
+    "description": "Simulates an enterprise banking escalation ticket with Indian PAN cards, Visa card credentials, customer contact details, and monetary balances.",
+    "prompt": "Customer support dispute escalation:\nCustomer Priya Sharma (Phone: +91 98765 43210, Email: priya.sharma@paycorp.com) reports an unauthorized debit on her account.\nCustomer PAN: ABCDE1234F.\nCard on file: Visa ending in 4532 8901 2345 6789 (Exp: 09/28).\n\nDisputed transaction: $4,250.00 (INR ₹3,48,500) debited on Oct 3rd. Current ledger balance before dispute was $18,400.50 (₹15,20,000.00). Please draft a formal reversal acknowledgment letter and fraud dispute reference."
+  },
+  {
+    "id": "safe-prompt",
+    "name": "Safe Engineering Query",
+    "category": "Safe",
+    "description": "Clean production prompt containing zero PII, secrets, medical, or financial tokens. Evaluates to Risk Score 0 (Safe).",
+    "prompt": "Write a production-ready React custom hook in TypeScript named `useDebounce` that delays updating a value until a specified timeout has elapsed. Include proper cleanup for component unmount and handle edge cases where the delay duration changes dynamically."
+  }
+]
+
